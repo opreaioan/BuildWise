@@ -1,98 +1,36 @@
-# BuildWise
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-BuildWise is a platform designed to bridge the gap between clients and companies by showcasing verified company profiles, project portfolios, and client reviews. It offers robust role-based account management, approval workflows for reviews and profiles, and an intuitive search feature.
+## Getting Started
 
-## Features
+First, run the development server:
 
-- **Role-Based Accounts**:
-  - **Admin**: Approves company profiles and client reviews, manages the platform.
-  - **Company**: Creates and updates profiles, adds project portfolios.
-  - **Client**: Leaves reviews on company profiles.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-- **Approval Workflows**:
-  - Client reviews and company profiles require admin approval before being visible on the platform.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- **Company Search**:
-  - Any visitor can search for and view company profiles, projects, and reviews.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-- **Static Pages**:
-  - **Home Page**: Features login and signup forms.
-  - **About Us Page**: Describes the mission and vision of BuildWise.
-  - **Partners Page**: Displays ads and collaborations with online stores.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Technology Stack
+## Learn More
 
-- **Frontend**:
-  - [Next.js](https://nextjs.org/): React framework with server-side rendering and static site generation.
-  - [Bootstrap](https://getbootstrap.com/): For responsive UI design.
-  - CSS & JavaScript: Custom styling and interactivity.
+To learn more about Next.js, take a look at the following resources:
 
-- **Backend**:
-  - Node.js: Server-side logic.
-  - [Prisma](https://www.prisma.io/): ORM for database interaction.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-- **Database**:
-  - MySQL: Reliable and scalable relational database system.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Installation and Setup
+## Deploy on Vercel
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/your-username/BuildWise.git
-   cd BuildWise
-   ```
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-2. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Set Up the Database**:
-   - Ensure MySQL is installed and running.
-   - Create a database named `BuildWiseDB`.
-   - Update the `.env` file with your database credentials:
-     ```env
-     DATABASE_URL="mysql://root:yourpassword@localhost:3306/BuildWiseDB"
-     ```
-
-4. **Pull the Prisma Schema**:
-   ```bash
-   npx prisma db pull
-   ```
-
-5. **Seed the Database**:
-   ```bash
-   npx prisma db seed
-   ```
-
-6. **Run the Development Server**:
-   ```bash
-   npm run dev
-   ```
-
-7. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Usage
-
-1. **Admins**:
-   - Approve or reject company profiles and client reviews.
-
-2. **Companies**:
-   - Sign up, create profiles, and add project portfolios.
-
-3. **Clients**:
-   - Sign up, search for companies, and leave reviews.
-
-## Contributions
-    - NA
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-## Acknowledgments
-
-- Built with [Next.js](https://nextjs.org/).
-- Database powered by [MySQL](https://www.mysql.com/).
-- ORM by [Prisma](https://www.prisma.io/).
-
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

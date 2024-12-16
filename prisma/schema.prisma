@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  
+}
+
+model AdminCompanyApproval {
+  idAdminCompanyApproval Int                         @id @default(autoincrement())
+  company_id             Int
+  status                 AdminCompanyApproval_status
+
+  @@index([company_id], map: "approval_company_id")
+}
+
+model AdminReviewApproval {
+  idAdminReviewApproval Int                        @id @default(autoincrement())
+  review_id             Int
+  status                AdminReviewApproval_status
+
+  @@index([review_id], map: "approval_review_id")
+}
+
+model AdminUserApproval {
+  idAdminUserApproval Int                      @id @default(autoincrement())
+  user_id             Int
+  status              AdminUserApproval_status
+
+  @@index([user_id], map: "user_id_idx")
+}
+
+model Certification {
+  idCertification    Int    @id @default(autoincrement())
+  company_id         Int
+  certification_name String @db.VarChar(255)
+
+  @@index([company_id], map: "certification_company_id")
+}
+
+model Company {
+  idCompany                 Int     @id @default(autoincrement())
+  user_id                   Int
+  name                      String  @db.VarChar(255)
+  logo                      Bytes?  @db.MediumBlob
+  about                     String? @db.Text
+  company_type              String? @db.VarChar(100)
+  year_established          Int?    @db.Year
+  adress                    String? @db.Text
+  phone                     String? @db.VarChar(20)
+  email                     String? @db.VarChar(100)
+  website_url               String? @db.VarChar(255)
+  social_media              Json?
+  geographical_availability String? @db.Text
+
+  @@index([user_id], map: "user_id_idx")
+}
+
+model CompanySpecialization {
+  company_id        Int
+  specialization_id Int
+
+  @@id([company_id, specialization_id])
+  @@index([specialization_id], map: "companyspecialization_specialization_id")
+}
+
+model Project {
+  idProject    Int       @id @default(autoincrement())
+  company_id   Int
+  name         String    @db.VarChar(255)
+  description  String?   @db.Text
+  project_type String?   @db.VarChar(100)
+  location     String?   @db.VarChar(255)
+  start_date   DateTime? @db.Date
+  end_date     DateTime? @db.Date
+  value        Decimal?  @db.Decimal(15, 2)
+  images       Bytes?    @db.MediumBlob
+  video        Bytes?
+  social_media Json?
+
+  @@index([company_id], map: "project_company_id")
+}
+
+model Review {
+  idReview    Int     @id @default(autoincrement())
+  client_id   Int
+  company_id  Int
+  rating      Int
+  review_text String? @db.Text
+  approved    Int?    @default(0) @db.TinyInt
+
+  @@index([client_id], map: "client_id_idx")
+  @@index([company_id], map: "review_company_id")
+}
+
+model Role {
+  idRole    Int    @id @default(autoincrement())
+  role_name String @unique(map: "role_name_UNIQUE") @db.VarChar(50)
+}
+
+model Service {
+  idService    Int    @id @default(autoincrement())
+  company_id   Int
+  service_name String @db.VarChar(255)
+
+  @@index([company_id], map: "service_company_id")
+}
+
+model Specialization {
+  idSpecialization Int    @id @default(autoincrement())
+  name             String @unique(map: "name_UNIQUE") @db.VarChar(100)
+}
+
+model User {
+  idUser        Int    @id @default(autoincrement())
+  username      String @unique(map: "username_UNIQUE") @db.VarChar(50)
+  password_hash String @db.VarChar(255)
+  email         String @unique(map: "email_UNIQUE") @db.VarChar(100)
+  role_id       Int
+  approved      Int?   @default(0) @db.TinyInt
+
+  @@index([role_id], map: "role_id_idx")
+}
+
+enum AdminCompanyApproval_status {
+  pending
+  approved
+  rejected
+}
+
+enum AdminReviewApproval_status {
+  pending
+  approved
+  rejected
+}
+
+enum AdminUserApproval_status {
+  pending
+  approved
+  rejected
+}
