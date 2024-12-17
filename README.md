@@ -57,7 +57,7 @@ cd BuildWise
 Install dependencies:
 npm install
 Set up environment variables: Create a .env file and configure your MySQL connection:
-DATABASE_URL="mysql://root:Oprea1985@localhost:3306/BuildWiseDB"
+DATABASE_URL="mysql://user:password@localhost:3306/BuildWiseDB"
 Database Configuration
 
 Pull the Database Schema:
