@@ -1,3 +1,5 @@
+BuildWise
+
 BuildWise is a web platform that connects companies, clients, and admins.
 The platform allows clients to search for companies, view their profiles, and leave reviews for projects.
 Admins manage approvals for company listings and client reviews.
