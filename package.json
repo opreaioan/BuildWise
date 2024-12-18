@@ -12,7 +12,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/client": "^6.0.1",
+    "@prisma/client": "^6.1.0",
+    "bcryptjs": "^2.4.3",
     "boostrap": "^2.0.0",
     "bootstrap": "^5.3.3",
     "mysql2": "^3.11.5",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.17.10",
     "@types/react": "^19",
     "@types/react-dom": "^19",
