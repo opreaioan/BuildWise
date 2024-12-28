@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface Company {
     idCompany: number;
@@ -15,44 +15,56 @@ export default function Companies() {
     const [companies, setCompanies] = useState<Company[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const handleSearch = async () => {
+    // Fetch companies based on the current query
+    const fetchCompanies = async (searchQuery: string) => {
+        if (!searchQuery) {
+            setCompanies([]);
+            return;
+        }
+
+        setLoading(true);
         try {
-            setLoading(true);
-            console.log("Searching for:", query); // Log the query
-
-            const response = await fetch(`/api/companies/search?query=${query}`);
-            console.log("API Response:", response); // Log the response object
-
+            const response = await fetch(`/api/companies/search?query=${searchQuery}`);
             const data = await response.json();
-            console.log("API Data:", data); // Log the actual data
-
-            setCompanies(data); // Update state with fetched companies
-            setLoading(false);
+            setCompanies(data);
         } catch (error) {
             console.error("Error fetching companies:", error);
+        } finally {
             setLoading(false);
         }
     };
 
+    // Handle input changes and fetch temporary results
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setQuery(value);
+        fetchCompanies(value);
+    };
+
+    // Handle form submission (Enter key or button click)
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault(); // Prevent default form submission behavior
+        fetchCompanies(query);
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 p-6">
             <h1 className="text-4xl font-bold mb-4">Search Companies</h1>
-            <div className="flex space-x-4 mb-6">
+            <form onSubmit={handleSearch} className="flex space-x-4 mb-6">
                 <input
                     type="text"
                     placeholder="Search for a company"
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={handleInputChange}
                     className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
                 />
                 <button
-                    onClick={handleSearch}
+                    type="submit"
                     className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
                 >
                     Search
                 </button>
-            </div>
+            </form>
 
             {loading ? (
                 <p>Loading...</p>
