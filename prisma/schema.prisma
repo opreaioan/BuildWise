@@ -95,6 +95,8 @@ model Review {
   rating              Int
   review_text         String?               @db.Text
   approved            Int?                  @default(0) @db.TinyInt
+  created_at          DateTime?             @default(now()) @db.DateTime(0)
+  modified_at         DateTime?             @default(now()) @db.DateTime(0)
   AdminReviewApproval AdminReviewApproval[]
   User                User                  @relation(fields: [client_id], references: [idUser], onDelete: NoAction, onUpdate: NoAction, map: "client_id")
   Company             Company               @relation(fields: [company_id], references: [idCompany], onDelete: NoAction, onUpdate: NoAction, map: "review_company_id")
