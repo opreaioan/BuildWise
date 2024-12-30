@@ -13,6 +13,13 @@ export async function GET(req: Request) {
                 company_id,
                 approved: 1, // Only fetch approved reviews
             },
+            include: {
+                User: {
+                    select: {
+                        username: true, // Only fetch username
+                    }
+                }
+            },
             orderBy: {
                 created_at: "desc",
             },

@@ -12,7 +12,8 @@ interface Company {
     website_url: string;
     Specialization: { name: string };
     Project: { idProject: number; name: string; description: string }[];
-    Review: { idReview: number; rating: number; review_text: string, created_at: Date }[];
+    Review: { idReview: number; rating: number; review_text: string, created_at: Date, client_id: number }[];
+    User: { username: string };
 }
 
 export default function CompanyDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -142,6 +143,7 @@ export default function CompanyDetail({ params }: { params: Promise<{ id: string
                         <li key={review.idReview} className="bg-white p-4 rounded-lg shadow-md">
                             <p><strong>Rating:</strong> {review.rating}/5</p>
                             <p>{review.review_text}</p>
+                            <p><strong>Reviewer:</strong> {review.client_id}</p>
                             <p className="text-gray-500 text-sm">Reviewed on: {new Date(review.created_at).toLocaleDateString()}</p>
                         </li>
                     ))}
