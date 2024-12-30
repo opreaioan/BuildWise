@@ -8,9 +8,10 @@ export default function Home() {
     password: "",
     confirmPassword: "",
     username: "",
+    role: "client", // Default to Client
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
@@ -24,6 +25,7 @@ export default function Home() {
           password: formData.password,
           confirmPassword: formData.confirmPassword,
           username: formData.username,
+          role: formData.role, // Include user type
         };
 
     try {
@@ -116,6 +118,20 @@ export default function Home() {
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   required
                 />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="role" className="block text-gray-700">
+                  User Type
+                </label>
+                <select
+                  id="role"
+                  value={formData.role}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border rounded-lg"
+                >
+                  <option value="client">Client</option>
+                  <option value="company">Company</option>
+                </select>
               </div>
             </>
           )}

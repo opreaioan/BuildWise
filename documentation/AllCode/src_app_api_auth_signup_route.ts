@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const { email, password, confirmPassword, username } = await req.json();
+    const { email, password, confirmPassword, username, role } = await req.json();
 
     // Validate passwords match
     if (password !== confirmPassword) {
@@ -34,7 +34,8 @@ export async function POST(req: Request) {
       data: {
         email,
         password_hash: hashedPassword,
-        role_id: 3, // Default to "Client"
+        //Assign role_id based on role
+        role_id: role==="company"?2:3, // Initial set Default to "Client" for testing
         username,
       },
     });
