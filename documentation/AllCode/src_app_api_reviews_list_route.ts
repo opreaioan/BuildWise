@@ -14,11 +14,11 @@ export async function GET(req: Request) {
                 approved: 1, // Only fetch approved reviews
             },
             include: {
-                User: {
+                User: { // Include User relation
                     select: {
-                        username: true, // Only fetch username
-                    }
-                }
+                        username: true, 
+                    },
+                },
             },
             orderBy: {
                 created_at: "desc",

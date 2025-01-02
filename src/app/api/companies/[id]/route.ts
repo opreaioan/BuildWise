@@ -20,6 +20,9 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
                 Project: true,
                 Review: {
                     where: { approved: 1 },
+                    include:{
+                        User: true,
+                    }
                 },
             },
         });
