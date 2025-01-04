@@ -52,7 +52,7 @@ export default function ClientDashboard() {
         <div className="min-h-screen bg-gray-100 p-6">
             <h1 className="text-4xl font-bold mb-4">Welcome, {profile.username}</h1>
             <p><strong>Email:</strong> {profile.email}</p>
-            <p><strong>Role:</strong> {profile.role_id === 3 ? "Client" : profile.role_id === 2 ? "Company User" : "Unknown"}</p>
+            <p><strong>Role:</strong> {profile.role_id === 3 ? "Client" : "Unknown"}</p>
 
             <section className="mt-8">
                 <h2 className="text-2xl font-semibold mb-4">Search Companies</h2>
