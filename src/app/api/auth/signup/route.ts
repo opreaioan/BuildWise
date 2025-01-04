@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "User already exists" },
+        { message: "User already exists. Please log in." },
         { status: 409 }
       );
     }
@@ -35,13 +36,13 @@ export async function POST(req: Request) {
         email,
         password_hash: hashedPassword,
         //Assign role_id based on role
-        role_id: role==="company"?2:3, // Initial set Default to "Client" for testing
+        role_id: role === "company" ? 2 : 3, // Initial set Default to "Client" for testing
         username,
       },
     });
 
     return NextResponse.json(
-      { message: "User created successfully", user: newUser },
+      { message: "User created successfully. Pending approval", user: newUser },
       { status: 201 }
     );
   } catch (error) {

@@ -1,40 +1,94 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AdminDashboard() {
     const [pendingCompanies, setPendingCompanies] = useState([]);
     const [pendingReviews, setPendingReviews] = useState([]);
+    const router = useRouter();
 
     useEffect(() => {
-        async function fetchApprovals() {
-            const response = await fetch("/api/admin/approvals");
-            const data = await response.json();
-            setPendingCompanies(data.pendingCompanies);
-            setPendingReviews(data.pendingReviews);
-        }
+        const fetchApprovals = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                router.push("/"); // Redirect to login if no token
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/admin/approvals", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (response.status === 403) {
+                    alert("Unauthorized access. Admins only.");
+                    router.push("/");
+                } else if (response.ok) {
+                    const data = await response.json();
+                    setPendingCompanies(data.pendingCompanies);
+                    setPendingReviews(data.pendingReviews);
+                } else {
+                    throw new Error("Failed to fetch approvals.");
+                }
+            } catch (error) {
+                console.error("Error fetching approvals:", error);
+                router.push("/"); // Redirect on error
+            }
+        };
+
         fetchApprovals();
-    }, []);
+    }, [router]);
 
     const handleCompanyApproval = async (company_id: number, status: string) => {
-        await fetch("/api/admin/approve/company", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ company_id, status }),
-        });
-        setPendingCompanies((prev) =>
-            prev.filter((company: any) => company.company_id !== company_id)
-        );
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Unauthorized");
+            router.push("/");
+            return;
+        }
+
+        try {
+            await fetch("/api/admin/approve/company", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ company_id, status }),
+            });
+
+            setPendingCompanies((prev) =>
+                prev.filter((company: any) => company.company_id !== company_id)
+            );
+        } catch (error) {
+            console.error("Error approving company:", error);
+        }
     };
 
     const handleReviewApproval = async (review_id: number, status: number) => {
-        await fetch("/api/admin/approve/review", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ review_id, status }),
-        });
-        setPendingReviews((prev) =>
-            prev.filter((review: any) => review.idReview !== review_id)
-        );
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Unauthorized");
+            router.push("/");
+            return;
+        }
+
+        try {
+            await fetch("/api/admin/approve/review", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ review_id, status }),
+            });
+
+            setPendingReviews((prev) =>
+                prev.filter((review: any) => review.idReview !== review_id)
+            );
+        } catch (error) {
+            console.error("Error approving review:", error);
+        }
     };
 
     return (
@@ -51,13 +105,17 @@ export default function AdminDashboard() {
                                 {company.Company.about}
                             </p>
                             <button
-                                onClick={() => handleCompanyApproval(company.company_id, "approved")}
+                                onClick={() =>
+                                    handleCompanyApproval(company.company_id, "approved")
+                                }
                                 className="mr-4 bg-green-500 text-white px-4 py-2 rounded"
                             >
                                 Approve
                             </button>
                             <button
-                                onClick={() => handleCompanyApproval(company.company_id, "rejected")}
+                                onClick={() =>
+                                    handleCompanyApproval(company.company_id, "rejected")
+                                }
                                 className="bg-red-500 text-white px-4 py-2 rounded"
                             >
                                 Reject
