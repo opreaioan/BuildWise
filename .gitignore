@@ -41,4 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 # misc
-#/documentation/
+/documentation/EERdiagramDB/
+/documentation/ProcessScreenShots/
+/documentation/SQLCreateTablesScripts/
+/documentation/seeding_database.txt

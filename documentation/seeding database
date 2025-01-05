@@ -1,2 +1,0 @@
-add "seed": "ts-node ./prisma/seed.ts" to package.json
-npx prisma db seed

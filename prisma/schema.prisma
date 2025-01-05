@@ -132,7 +132,6 @@ model User {
   password_hash     String              @db.VarChar(255)
   email             String              @unique(map: "email_UNIQUE") @db.VarChar(100)
   role_id           Int
-  approved          Int?                @default(0) @db.TinyInt
   AdminUserApproval AdminUserApproval[]
   Company           Company[]
   Review            Review[]
