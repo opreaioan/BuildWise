@@ -7,7 +7,6 @@ interface UserProfile {
     username: string;
     email: string;
     role_id: number;
-    approved: boolean;
 }
 
 export default function ClientDashboard() {
@@ -19,55 +18,27 @@ export default function ClientDashboard() {
 
     useEffect(() => {
         async function fetchProfile() {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                router.push("/"); // Redirect to login if no token
-                return;
-            }
-
             try {
-                const response = await fetch("/api/users/me", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                if (response.status === 403) {
-                    alert("Unauthorized: Approval required.");
-                    router.push("/");
-                } else if (response.ok) {
+                const response = await fetch("/api/users/me");
+                if (response.ok) {
                     const data = await response.json();
                     setProfile(data);
                 } else {
-                    throw new Error("Failed to load profile");
+                    alert("Failed to load profile");
                 }
             } catch (error) {
                 console.error("Error fetching profile:", error);
-                router.push("/");
             }
         }
-
         fetchProfile();
-    }, [router]);
+    }, []);
 
     const handleSearch = async () => {
         setLoading(true);
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("Unauthorized");
-            router.push("/");
-            return;
-        }
-
         try {
-            const response = await fetch(`/api/companies/search?query=${query}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setCompanies(data);
-            } else {
-                throw new Error("Error searching for companies");
-            }
+            const response = await fetch(`/api/companies/search?query=${query}`);
+            const data = await response.json();
+            setCompanies(data);
         } catch (error) {
             console.error("Error searching for companies:", error);
         } finally {

@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
@@ -21,13 +20,6 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!user.approved) {
-      return NextResponse.json(
-        { message: "User pending approval" },
-        { status: 403 }
-      );
-    }
-
     // Check password
     const isValid = await bcrypt.compare(password, user.password_hash);
 
@@ -38,24 +30,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: user.idUser, email: user.email, role: user.role_id, approved: user.approved },
-      process.env.JWT_SECRET || "default_jwt_secret",
-      { expiresIn: "1h" } // Token expires in 1 hour
-    );
-
-    // Return success response with token
+    // Return success response (you'd normally set a session or JWT)
     return NextResponse.json(
-      {
-        message: "Login successful",
-        token,
-        user: {
-          id: user.idUser,
-          email: user.email,
-          role: user.role_id,
-        },
-      },
+      { message: "Login successful", user: { id: user.idUser, role: user.role_id } },
       { status: 200 }
     );
   } catch (error) {
