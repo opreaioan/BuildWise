@@ -9,6 +9,7 @@ export default function Home() {
     confirmPassword: "",
     username: "",
     role: "client", // Default to Client
+    adminCode: "", // Admin signup code (only for admin)
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -18,15 +19,14 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
-    const payload = isLogin
-      ? { email: formData.email, password: formData.password }
-      : {
-          email: formData.email,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-          username: formData.username,
-          role: formData.role, // Include user type
-        };
+    const payload = {
+      email: formData.email,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+      username: formData.username,
+      role: formData.role,
+      ...(formData.role === "admin" && { adminCode: formData.adminCode }), // Include adminCode only for admin
+    };
 
     try {
       const response = await fetch(endpoint, {
@@ -38,7 +38,15 @@ export default function Home() {
       const result = await response.json();
       if (response.ok) {
         alert(result.message);
-        console.log(result);
+
+        const roleRedirect: { [key: number]: string } = {
+          1: "/admin-dashboard", // Admin
+          2: "/company-dashboard", // Company User
+          3: "/client-dashboard", // Client
+        };
+
+        const redirectUrl = roleRedirect[result.role as number] || "/";
+        window.location.href = redirectUrl;
       } else {
         alert(result.message);
       }
@@ -53,8 +61,7 @@ export default function Home() {
         Welcome to BuildWise
       </h1>
       <p className="mb-6 text-center text-gray-600">
-        A platform where companies can showcase their portfolios and clients can
-        leave reviews!
+        A platform where companies can showcase their portfolios and clients can leave reviews!
       </p>
 
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
@@ -64,9 +71,7 @@ export default function Home() {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700">
-              Email
-            </label>
+            <label htmlFor="email" className="block text-gray-700">Email</label>
             <input
               id="email"
               type="email"
@@ -78,9 +83,7 @@ export default function Home() {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-700">
-              Password
-            </label>
+            <label htmlFor="password" className="block text-gray-700">Password</label>
             <input
               id="password"
               type="password"
@@ -94,9 +97,7 @@ export default function Home() {
           {!isLogin && (
             <>
               <div className="mb-4">
-                <label htmlFor="confirmPassword" className="block text-gray-700">
-                  Confirm Password
-                </label>
+                <label htmlFor="confirmPassword" className="block text-gray-700">Confirm Password</label>
                 <input
                   id="confirmPassword"
                   type="password"
@@ -107,9 +108,7 @@ export default function Home() {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="username" className="block text-gray-700">
-                  Username
-                </label>
+                <label htmlFor="username" className="block text-gray-700">Username</label>
                 <input
                   id="username"
                   type="text"
@@ -120,9 +119,7 @@ export default function Home() {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="role" className="block text-gray-700">
-                  User Type
-                </label>
+                <label htmlFor="role" className="block text-gray-700">User Type</label>
                 <select
                   id="role"
                   value={formData.role}
@@ -131,8 +128,22 @@ export default function Home() {
                 >
                   <option value="client">Client</option>
                   <option value="company">Company</option>
+                  <option value="admin">Admin</option>
                 </select>
               </div>
+              {formData.role === "admin" && (
+                <div className="mb-4">
+                  <label htmlFor="adminCode" className="block text-gray-700">Admin Code</label>
+                  <input
+                    id="adminCode"
+                    type="password"
+                    value={formData.adminCode}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border rounded-lg"
+                    required
+                  />
+                </div>
+              )}
             </>
           )}
 
@@ -145,13 +156,8 @@ export default function Home() {
         </form>
 
         <div className="mt-4 text-center">
-          <button
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-blue-500 hover:underline"
-          >
-            {isLogin
-              ? "Don't have an account? Create one"
-              : "Already have an account? Login"}
+          <button onClick={() => setIsLogin(!isLogin)} className="text-blue-500 hover:underline">
+            {isLogin ? "Don't have an account? Create one" : "Already have an account? Login"}
           </button>
         </div>
       </div>

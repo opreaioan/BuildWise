@@ -1,44 +1,38 @@
-import { PrismaClient } from "@prisma/client";
+import { NextApiRequest, NextApiResponse } from "next";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
+// Create a new Prisma client instance
 const prisma = new PrismaClient();
 
-export async function POST(req: Request) {
+// Define the handler function for the login route that will be called when the user submits the login form in the frontend 
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed" });
+  }
+// Extract the email and password from the request body
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = await req.json();
-
-    // Find user by email
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { message: "User not found" },
-        { status: 404 }
-      );
+    // Find the user with the provided email
+    const user = await prisma.user.findUnique({ where: { email } });
+    // If the user does not exist or the password is incorrect, return an error response
+    if (!user || !(await bcrypt.compare(password, user.password_hash))) {
+      return res.status(401).json({ message: "Invalid email or password" });
     }
-
-    // Check password
-    const isValid = await bcrypt.compare(password, user.password_hash);
-
-    if (!isValid) {
-      return NextResponse.json(
-        { message: "Invalid credentials" },
-        { status: 401 }
-      );
-    }
-
-    // Return success response (you'd normally set a session or JWT)
-    return NextResponse.json(
-      { message: "Login successful", user: { id: user.idUser, role: user.role_id } },
-      { status: 200 }
+    // Generate a JWT token and set it as a cookie in the response header to authenticate the user
+    const token = jwt.sign(
+      { id: user.idUser, role: user.role_id },
+      process.env.JWT_SECRET!,
+      { expiresIn: "1h" }
     );
+
+      // Set the token as a cookie in the response header and return a success response with the user role
+    res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Path=/; Secure; SameSite=Strict`);
+    return res.status(200).json({ message: "Login successful", role: user.role_id });
   } catch (error) {
-    return NextResponse.json(
-      { message: "Internal server error", error },
-      { status: 500 }
-    );
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 }
