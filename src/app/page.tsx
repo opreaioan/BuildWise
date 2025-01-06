@@ -1,5 +1,11 @@
+// Frontend: src_app_page.tsx
 "use client";
 import React, { useState } from "react";
+import {jwtDecode,JwtPayload} from "jwt-decode";
+
+interface CustomJwtPayload extends JwtPayload {
+  role_id: number; // Adjust the type to match the actual type of role_id in token
+}
 
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
@@ -25,7 +31,7 @@ export default function Home() {
       confirmPassword: formData.confirmPassword,
       username: formData.username,
       role: formData.role,
-      ...(formData.role === "admin" && { adminCode: formData.adminCode }), // Include adminCode only for admin
+      ...(formData.role === "admin" && { adminCode: formData.adminCode }),
     };
 
     try {
@@ -39,13 +45,15 @@ export default function Home() {
       if (response.ok) {
         alert(result.message);
 
-        const roleRedirect: { [key: number]: string } = {
+        const token = result.token;
+        const decoded = jwtDecode<CustomJwtPayload>(token);
+        const roleRedirect : {[key: number]: string} = {
           1: "/admin-dashboard", // Admin
           2: "/company-dashboard", // Company User
           3: "/client-dashboard", // Client
         };
-
-        const redirectUrl = roleRedirect[result.role as number] || "/";
+        
+        const redirectUrl = roleRedirect[decoded.role_id] || "/";
         window.location.href = redirectUrl;
       } else {
         alert(result.message);
