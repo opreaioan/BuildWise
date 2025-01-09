@@ -7,12 +7,12 @@ export async function PATCH(req: Request) {
     try {
         const { review_id, status } = await req.json();
 
-        const updatedReview = await prisma.review.update({
-            where: { idReview: review_id },
-            data: { approved: status },
+        const updatedApproval = await prisma.adminReviewApproval.updateMany({
+            where: { review_id },
+            data: { status },
         });
 
-        return NextResponse.json({ message: "Review approval updated", updatedReview });
+        return NextResponse.json({ message: "Review approval updated", updatedApproval });
     } catch (error) {
         console.error(error);
         return NextResponse.json({ message: "Internal Server Error", error }, { status: 500 });

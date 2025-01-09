@@ -1,3 +1,6 @@
+// Handles user login. Verifies credentials, checks approval status,
+// generates a JWT, and sets it in a secure cookie.
+
 import { NextResponse } from "next/server";
 import {PrismaClient} from "@prisma/client"; // Ensure prisma client is properly imported
 import jwt from "jsonwebtoken";
@@ -51,10 +54,10 @@ export async function POST(req: Request) {
       httpOnly: true, // Prevent client-side JavaScript from accessing this cookie (XSS attacks) being only accessible by the server
       secure: process.env.NODE_ENV === "production", // Sets to true if NODE_ENV === production, otherwise it's set to false
       sameSite: "strict", // Prevent CSRF (Cross-Site Request Forgery) attacks, thus only allowing requests from the same site
-      maxAge: 3600, // 1 hour
-      path: "/",
+      maxAge: 10800, // 3 hours
+      path: "/", // Cookie is valid across all paths in the app
     });
-
+    console.log("TokenBody: ", token);
     console.log("CookieBody: ", response.cookies.get("auth_token"));
     return response;
   } catch (error) {

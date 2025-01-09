@@ -9,6 +9,12 @@ interface UserProfile {
     role_id: number;
 }
 
+interface Company {
+    idCompany: number;
+    name: string;
+    about: string;
+}
+
 export default function ClientDashboard() {
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [query, setQuery] = useState("");
@@ -17,21 +23,26 @@ export default function ClientDashboard() {
     const router = useRouter();
 
     useEffect(() => {
-        async function fetchProfile() {
+        async function fetchUserProfile() {
             try {
-                const response = await fetch("/api/users/me");
+                const response = await fetch("/api/auth/validate");
                 if (response.ok) {
                     const data = await response.json();
-                    setProfile(data);
+                    setProfile(data.user); // Set the decoded user data
                 } else {
-                    alert("Failed to load profile");
+                    alert("NEW ERROR Session expired. Please log in again.");
+                    router.push("/");
                 }
             } catch (error) {
                 console.error("Error fetching profile:", error);
+                alert("Invalid session. Please log in again.");
+                router.push("/");
             }
+            
         }
-        fetchProfile();
-    }, []);
+        fetchUserProfile();
+    }, [router]);
+    
 
     const handleSearch = async () => {
         setLoading(true);
@@ -75,7 +86,7 @@ export default function ClientDashboard() {
                     <p>Loading...</p>
                 ) : (
                     <ul className="space-y-4">
-                        {companies.map((company: any) => (
+                        {companies.map((company: Company) => (
                             <li
                                 key={company.idCompany}
                                 className="bg-white p-4 rounded-lg shadow-md"
